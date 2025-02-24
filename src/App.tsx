@@ -11,13 +11,14 @@ function delay(ms: number) {
 
 function App() {
   let Gp = [
-    { x: 10, y: 10 },
-    { x: 11, y: 11 },
-    { x: 12, y: 11 },
-    { x: 11, y: 12 },
-    { x: 10, y: 12 },
+    // { x: 10, y: 10 },
+    // { x: 11, y: 11 },
+    // { x: 12, y: 11 },
+    // { x: 11, y: 12 },
+    // { x: 10, y: 12 },
   ];
   const [Ga, setGa] = useState<position[]>(Gp);
+  const [isRuning, setRuning] = useState(false);
   const cellSize = 10;
   const numCell = 70;
 
@@ -33,6 +34,20 @@ function App() {
     setGa(Gf);
   };
 
+  const addCell = (row: number, col: number) => {
+    setGa((prev) => [...prev, { x: row, y: col }]);
+  };
+
+  useEffect(() => {
+    if (!isRuning) return;
+    delay(timeSleep);
+    const interval = setInterval(() => {
+      setGa((prevGa) => mainLop(69, prevGa));
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [isRuning]);
+
   return (
     <div className="container">
       <svg width={700} height={700}>
@@ -46,6 +61,7 @@ function App() {
                 y={row * cellSize}
                 height={cellSize}
                 width={cellSize}
+                onClick={() => addCell(row, col)}
                 fill={
                   Ga.find((e) => e.x === row && e.y === col) ? "black" : "white"
                 }
@@ -56,6 +72,11 @@ function App() {
         )}
       </svg>
       <button onClick={() => next()}>next</button>
+      <button onClick={() => setRuning(!isRuning)}>
+        {isRuning ? "pause" : "play"}
+      </button>
+
+      <label htmlFor="">{Ga.length}</label>
     </div>
   );
 }
