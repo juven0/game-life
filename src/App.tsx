@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import mainLop, { position } from "./algo";
+import mainLop, { position } from "./utils/algo";
 
 const iteration = 2;
 const timeSleep = 2000;
@@ -10,14 +10,7 @@ function delay(ms: number) {
 }
 
 function App() {
-  let Gp = [
-    // { x: 10, y: 10 },
-    // { x: 11, y: 11 },
-    // { x: 12, y: 11 },
-    // { x: 11, y: 12 },
-    // { x: 10, y: 12 },
-  ];
-  const [Ga, setGa] = useState<position[]>(Gp);
+  const [Ga, setGa] = useState<position[]>([]);
   const [isRuning, setRuning] = useState(false);
   const cellSize = 10;
   const numCell = 70;

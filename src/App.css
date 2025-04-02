@@ -1,21 +1,27 @@
 #root {
   max-width: 1280px;
-  margin: 0 ;
+  margin: 0;
   padding: 0;
   text-align: center;
 }
 
-
-.container{
-    position:absolute;
-    width: 100%;
-    height: 100%;
-    background-color: cadetblue;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-svg{
-    stroke:#d4d4d4;
+svg {
+  stroke: #d4d4d4;
+}
+
+rect:hover {
+  fill: rgb(75, 75, 75);
+}
+rect {
+  border-radius: 6px;
 }
