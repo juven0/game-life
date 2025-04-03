@@ -27,14 +27,32 @@ const io = new Server(server, {
 
 let userSocketMap: User[] = [];
 
-function getUserInRoom(roomId: string) {
-  return userSocketMap.filter((user) => (user.roomId = roomId));
+function getUserInRoom(roomId: string): User[] {
+  return userSocketMap.filter((user) => user.roomId === roomId);
+}
+
+function getRoomId(socketId: string): string | null {
+  const roomId = userSocketMap.find(
+    (user) => user.socketId === socketId
+  )?.roomId;
+  if (!roomId) {
+    return null;
+  }
+  return roomId;
+}
+
+function getUserBySocketId(socketId: string): User | null {
+  const user = userSocketMap.find((user) => user.socketId === socketId);
+  if (!user) {
+    return null;
+  }
+  return user;
 }
 
 io.on("connection", (socket) => {
   socket.on(SocketEvent.JOIN_REQUEST, ({ roomId, userName }) => {
-    const isUserExist = getUserInRoom(roomId).filter(
-      (user) => (user.userName = userName)
+    const isUserExist = getUserInRoom(roomId)?.filter(
+      (user: User) => (user.userName = userName)
     );
 
     if (isUserExist.length > 0) {
@@ -51,6 +69,21 @@ io.on("connection", (socket) => {
 
     userSocketMap.push(user);
     socket.join(roomId);
+    socket.broadcast.to(roomId).emit(SocketEvent.USER_JOINED, user);
+    const users = getUserInRoom(roomId);
+    io.to(socket.id).emit(SocketEvent.JOIN_ACCEPTED, { user, users });
+  });
+
+  socket.on(SocketEvent.UPDATE_ROOM_ARRAY, ({ roomId, userArray, user }) => {
+    socket.broadcast
+      .to(roomId)
+      .emit(SocketEvent.UPDATE_ROOM_ARRAY, { user, userArray });
+  });
+
+  socket.on(SocketEvent.USER_READY, ({ roomId, user, userFirstArray }) => {
+    socket.broadcast
+      .to(roomId)
+      .emit(SocketEvent.USER_READY, { user, userFirstArray });
   });
 });
 
