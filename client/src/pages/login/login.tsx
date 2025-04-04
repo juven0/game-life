@@ -1,5 +1,6 @@
 import "./login.scss";
 import logo from "../../assets/image/gamelife.png";
+import LoginForm from "../../components/loginForm/loginForm";
 
 const Login = () => {
   return (
@@ -18,17 +19,7 @@ const Login = () => {
       </div>
 
       <div className="rightSide">
-        <div className="form">
-          <div className="item-form">
-            <label htmlFor="">Username</label>
-            <input type="text" name="" id="" />
-          </div>
-          <div className="item-form">
-            <label htmlFor="">Room ID</label>
-            <input type="text" name="" id="" />
-          </div>
-          <button>Join Parti</button>
-        </div>
+        <LoginForm />
       </div>
     </div>
   );
