@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import mainLop, { position } from "../utils/algo";
+import mainLop, { position } from "../../utils/algo";
+import "./owner.scss";
+import { UseAppContext } from "../../context/appContext";
 
 const iteration = 2;
 const timeSleep = 2000;
@@ -8,11 +10,13 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const Main = () => {
+const Owner = () => {
   const [Ga, setGa] = useState<position[]>([]);
   const [isRuning, setRuning] = useState(false);
   const cellSize = 10;
-  const numCell = 70;
+  const numCell = 50;
+
+  const { currentUser } = UseAppContext();
 
   async function loopWithDelay() {
     for (let i = 0; i < iteration; i++) {
@@ -42,7 +46,13 @@ const Main = () => {
 
   return (
     <div className="container">
-      <svg width={700} height={700}>
+      <div className="info">
+        <div className="userInfo">
+          <label htmlFor="">{currentUser.userName}</label>
+        </div>
+        <div className="population">Population {Ga.length}</div>
+      </div>
+      <svg width={500} height={500}>
         {Array.from({ length: numCell }).map((_, row) =>
           Array.from({ length: numCell }).map((_, col) => {
             const cellId = `${row}-${col}`;
@@ -67,10 +77,8 @@ const Main = () => {
       <button onClick={() => setRuning(!isRuning)}>
         {isRuning ? "pause" : "play"}
       </button>
-
-      <label htmlFor="">{Ga.length}</label>
     </div>
   );
 };
 
-export default Main;
+export default Owner;

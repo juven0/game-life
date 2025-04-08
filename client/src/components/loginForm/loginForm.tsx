@@ -1,14 +1,17 @@
-import { FormEvent, useRef } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 import "./loginForm.scss";
 import { useSocket } from "../../context/socketContext";
 import { UseAppContext } from "../../context/appContext";
 import { USER_STATUS } from "../../types/user";
 import { socketEvents } from "../../types/socket";
 import { v4 as uuidv4 } from "uuid";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const { socket } = useSocket();
   const { currentUser, setCurrentUser, status, setStatus } = UseAppContext();
+  const navigate = useNavigate();
 
   const usernameRef = useRef<HTMLInputElement | null>(null);
 
@@ -20,9 +23,23 @@ const LoginForm = () => {
   const joinRoom = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === USER_STATUS.ATTEMPTING_JOIN) return;
+    toast.loading("Joining room...");
     socket.emit(socketEvents.JOIN_REQUEST, currentUser);
     setStatus(USER_STATUS.ATTEMPTING_JOIN);
   };
+
+  useEffect(() => {
+    if (status === USER_STATUS.DISCONNECTED && !socket.connected) {
+      socket.connect();
+      return;
+    }
+
+    // const isRedirect = sessionStorage.getItem("redirect") || false;
+    if (status === USER_STATUS.JOINED) {
+      sessionStorage.setItem("redirect", "true");
+      navigate(`/play/${currentUser.roomId}`);
+    }
+  }, [currentUser, socket, navigate, status]);
 
   return (
     <form onSubmit={joinRoom} className="form">
@@ -51,7 +68,11 @@ const LoginForm = () => {
       <button className="join" type="submit">
         Join Parti
       </button>
-      <button onClick={() => createNewRoomId()} className="createRoom">
+      <button
+        type="button"
+        onClick={() => createNewRoomId()}
+        className="createRoom"
+      >
         Creat Room
       </button>
     </form>
