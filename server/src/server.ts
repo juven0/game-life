@@ -72,6 +72,7 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomId).emit(SocketEvent.USER_JOINED, user);
     const users = getUserInRoom(roomId);
     io.to(socket.id).emit(SocketEvent.JOIN_ACCEPTED, { user, users });
+    console.log(userSocketMap);
   });
 
   socket.on(SocketEvent.UPDATE_ROOM_ARRAY, ({ roomId, userArray, user }) => {
