@@ -51,14 +51,15 @@ function getUserBySocketId(socketId: string): User | null {
 
 io.on("connection", (socket) => {
   socket.on(SocketEvent.JOIN_REQUEST, ({ roomId, userName }) => {
-    const isUserExist = getUserInRoom(roomId)?.filter(
-      (user: User) => (user.userName = userName)
-    );
+    console.log(userName);
+    // const isUserExist = getUserInRoom(roomId)?.filter(
+    //   (user: User) => (user.userName = userName)
+    // );
 
-    if (isUserExist.length > 0) {
-      socket.to(socket.id).emit(SocketEvent.USERNAME_EXIST);
-      return;
-    }
+    // if (isUserExist.length > 0) {
+    //   socket.to(socket.id).emit(SocketEvent.USERNAME_EXIST);
+    //   return;
+    // }
 
     const user: User = {
       userName: userName,
@@ -69,10 +70,10 @@ io.on("connection", (socket) => {
 
     userSocketMap.push(user);
     socket.join(roomId);
-    socket.broadcast.to(roomId).emit(SocketEvent.USER_JOINED, user);
+    socket.broadcast.to(roomId).emit(SocketEvent.USER_JOINED, { user });
     const users = getUserInRoom(roomId);
     io.to(socket.id).emit(SocketEvent.JOIN_ACCEPTED, { user, users });
-    console.log(userSocketMap);
+    console.log(users);
   });
 
   socket.on(SocketEvent.UPDATE_ROOM_ARRAY, ({ roomId, userArray, user }) => {
