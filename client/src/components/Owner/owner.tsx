@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import mainLop, { position } from "../../utils/algo";
 import "./owner.scss";
 import { UseAppContext } from "../../context/appContext";
+import { useSocket } from "../../context/socketContext";
+import { socketEvents } from "../../types/socket";
 
 const iteration = 2;
 const timeSleep = 2000;
@@ -11,12 +13,12 @@ function delay(ms: number) {
 }
 
 const Owner = () => {
-  const [Ga, setGa] = useState<position[]>([]);
-  const [isRuning, setRuning] = useState(false);
+  const { userPopulation, setUserPopulation, currentUser } = UseAppContext();
+  const { socket } = useSocket();
+  const [Ga, setGa] = useState<position[]>(userPopulation || []);
+  // const [isRuning, setRuning] = useState(false);
   const cellSize = 10;
   const numCell = 50;
-
-  const { currentUser } = UseAppContext();
 
   async function loopWithDelay() {
     for (let i = 0; i < iteration; i++) {
@@ -25,24 +27,29 @@ const Owner = () => {
   }
   loopWithDelay();
 
-  const next = () => {
-    const Gf = mainLop(69, Ga);
-    setGa(Gf);
+  // const next = () => {
+  //   const Gf = mainLop(69, Ga);
+  //   setGa(Gf);
+  // };
+
+  const ready = () => {
+    socket.emit(socketEvents.USER_READY, { userPopulation, currentUser });
   };
 
   const addCell = (row: number, col: number) => {
+    setUserPopulation([...userPopulation, { x: row, y: col }]);
     setGa((prev) => [...prev, { x: row, y: col }]);
   };
 
-  useEffect(() => {
-    if (!isRuning) return;
-    delay(timeSleep);
-    const interval = setInterval(() => {
-      setGa((prevGa) => mainLop(69, prevGa));
-    }, 200);
+  // useEffect(() => {
+  //   if (!isRuning) return;
+  //   delay(timeSleep);
+  //   const interval = setInterval(() => {
+  //     setGa((prevGa) => mainLop(69, prevGa));
+  //   }, 200);
 
-    return () => clearInterval(interval);
-  }, [isRuning]);
+  //   return () => clearInterval(interval);
+  // }, [isRuning]);
 
   return (
     <div className="container">
@@ -73,10 +80,10 @@ const Owner = () => {
           })
         )}
       </svg>
-      <button onClick={() => next()}>next</button>
-      <button onClick={() => setRuning(!isRuning)}>
+      <button onClick={() => ready()}>Ready</button>
+      {/* <button onClick={() => setRuning(!isRuning)}>
         {isRuning ? "pause" : "play"}
-      </button>
+      </button> */}
     </div>
   );
 };

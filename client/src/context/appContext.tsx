@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { AppContext as AppContextType } from "../types/app";
 import { RemoteUser, User, USER_STATUS } from "../types/user";
+import { position } from "../utils/algo";
 
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -20,6 +21,7 @@ function AppContextProvider({ children }: { children: ReactNode }) {
   });
 
   const [users, setUsers] = useState<RemoteUser[]>([]);
+  const [userPopulation, setUserPopulation] = useState<position[]>([]);
 
   const [status, setStatus] = useState<USER_STATUS>(USER_STATUS.INITIAL);
   return (
@@ -31,6 +33,8 @@ function AppContextProvider({ children }: { children: ReactNode }) {
         setUsers,
         status,
         setStatus,
+        userPopulation,
+        setUserPopulation,
       }}
     >
       {children}

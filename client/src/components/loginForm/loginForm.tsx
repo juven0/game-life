@@ -24,7 +24,6 @@ const LoginForm = () => {
     e.preventDefault();
     if (status === USER_STATUS.ATTEMPTING_JOIN) return;
     toast.loading("Joining room...");
-    console.log(currentUser);
     socket.emit(socketEvents.JOIN_REQUEST, currentUser);
     setStatus(USER_STATUS.ATTEMPTING_JOIN);
   };
