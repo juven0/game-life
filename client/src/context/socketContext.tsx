@@ -30,7 +30,7 @@ export const useSocket = (): socketContextType => {
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:1212";
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
-  const { setCurrentUser, setUsers, setStatus } = UseAppContext();
+  const { setCurrentUser, setUsers, setStatus, users } = UseAppContext();
 
   const handelJoinAccept = useCallback(
     ({ user, users }: { user: User; users: RemoteUser[] }) => {
@@ -40,6 +40,14 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
       setStatus(USER_STATUS.JOINED);
     },
     [setCurrentUser, setUsers, setStatus]
+  );
+
+  const handelJoined = useCallback(
+    ({ user }: { user: RemoteUser }) => {
+      console.log(user);
+      setUsers([...users, user]);
+    },
+    [setUsers, users]
   );
 
   const socket: Socket = useMemo(
@@ -52,10 +60,12 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     socket.on(socketEvents.JOIN_ACCEPTED, handelJoinAccept);
+    socket.on(socketEvents.USER_JOINED, handelJoined);
     return () => {
       socket.off(socketEvents.JOIN_ACCEPTED);
+      socket.off(socketEvents.USER_JOINED);
     };
-  }, [handelJoinAccept, socket, setUsers]);
+  }, [handelJoinAccept, handelJoined, socket, setUsers]);
 
   return (
     <SocketContext.Provider value={{ socket }}>
