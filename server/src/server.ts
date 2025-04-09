@@ -82,10 +82,11 @@ io.on("connection", (socket) => {
       .emit(SocketEvent.UPDATE_ROOM_ARRAY, { user, userArray });
   });
 
-  socket.on(SocketEvent.USER_READY, ({ roomId, user, userFirstArray }) => {
+  socket.on(SocketEvent.USER_READY, (data) => {
+    console.log(data.currentUser.roomId);
     socket.broadcast
-      .to(roomId)
-      .emit(SocketEvent.USER_READY, { user, userFirstArray });
+      .to(data.currentUser.roomId)
+      .emit(SocketEvent.USER_READY, data);
   });
 });
 
