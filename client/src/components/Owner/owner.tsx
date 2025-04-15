@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import mainLop, { position } from "../../utils/algo";
+import { useState } from "react";
+import { position } from "../../utils/algo";
 import "./owner.scss";
 import { UseAppContext } from "../../context/appContext";
 import { useSocket } from "../../context/socketContext";

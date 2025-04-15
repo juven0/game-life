@@ -1,8 +1,17 @@
+import { userData } from "../../types/userDataContext";
 import "./playerBoard.scss";
 
-const PlayerBoard = ({ playerName }: { playerName: string }) => {
+const PlayerBoard = ({
+  playerName,
+  userData,
+}: {
+  playerName: string;
+  userData: userData;
+}) => {
   const cellSize = 7;
   const numCell = 50;
+
+  console.log(userData);
   return (
     <div className="playerBoard">
       <div className="playerInfo">
@@ -21,7 +30,17 @@ const PlayerBoard = ({ playerName }: { playerName: string }) => {
                 y={row * cellSize}
                 height={cellSize}
                 width={cellSize}
-                fill={"white"}
+                fill={
+                  userData !== undefined
+                    ? userData.userPopulation?.length > 1
+                      ? userData.userPopulation.find(
+                          (e) => e.x === row && e.y === col
+                        )
+                        ? "black"
+                        : "white"
+                      : "white"
+                    : "white"
+                }
                 className="cell"
               />
             );

@@ -14,6 +14,8 @@ import { io, Socket } from "socket.io-client";
 import { RemoteUser, User, USER_STATUS } from "../types/user";
 import { UseAppContext } from "./appContext";
 import toast from "react-hot-toast";
+import { useUserData } from "./usersData";
+import { userData } from "../types/userDataContext";
 
 const SocketContext = createContext<socketContextType | null>(null);
 
@@ -31,6 +33,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:1212";
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const { setCurrentUser, setUsers, setStatus, users } = UseAppContext();
+  const { datas, setDatas } = useUserData();
 
   const handelJoinAccept = useCallback(
     ({ user, users }: { user: User; users: RemoteUser[] }) => {
@@ -44,7 +47,6 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   const handelJoined = useCallback(
     ({ user }: { user: RemoteUser }) => {
-      console.log(user);
       setUsers([...users, user]);
     },
     [setUsers, users]
@@ -58,14 +60,32 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
+  const setUserReady = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (userReadyData: any) => {
+      try {
+        const parsedData: userData =
+          typeof userReadyData === "string"
+            ? JSON.parse(userReadyData)
+            : userReadyData;
+        setDatas([...datas, parsedData]);
+      } catch (err) {
+        console.error("Erreur de parsing de l'event userReadyData :", err);
+      }
+    },
+    [datas, setDatas]
+  );
+
   useEffect(() => {
     socket.on(socketEvents.JOIN_ACCEPTED, handelJoinAccept);
     socket.on(socketEvents.USER_JOINED, handelJoined);
+    socket.on(socketEvents.USER_READY, setUserReady);
     return () => {
       socket.off(socketEvents.JOIN_ACCEPTED);
       socket.off(socketEvents.USER_JOINED);
+      socket.off(socketEvents.USER_READY);
     };
-  }, [handelJoinAccept, handelJoined, socket, setUsers]);
+  }, [handelJoinAccept, handelJoined, socket, setUsers, setUserReady]);
 
   return (
     <SocketContext.Provider value={{ socket }}>
