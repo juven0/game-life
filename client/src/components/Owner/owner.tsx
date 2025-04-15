@@ -4,6 +4,7 @@ import "./owner.scss";
 import { UseAppContext } from "../../context/appContext";
 import { useSocket } from "../../context/socketContext";
 import { socketEvents } from "../../types/socket";
+import { USER_STATUS } from "../../types/user";
 
 const iteration = 2;
 const timeSleep = 2000;
@@ -15,6 +16,8 @@ function delay(ms: number) {
 const Owner = () => {
   const { userPopulation, setUserPopulation, currentUser } = UseAppContext();
   const { socket } = useSocket();
+  const { status, setStatus } = UseAppContext();
+
   const [Ga, setGa] = useState<position[]>(userPopulation || []);
   // const [isRuning, setRuning] = useState(false);
   const cellSize = 10;
@@ -34,6 +37,7 @@ const Owner = () => {
 
   const ready = () => {
     socket.emit(socketEvents.USER_READY, { userPopulation, currentUser });
+    setStatus(USER_STATUS.READY);
   };
 
   const addCell = (row: number, col: number) => {
@@ -80,7 +84,13 @@ const Owner = () => {
           })
         )}
       </svg>
-      <button onClick={() => ready()}>Ready</button>
+      <button
+        disabled={status === USER_STATUS.READY ? true : false}
+        className={status === USER_STATUS.READY ? "desable" : "active"}
+        onClick={() => ready()}
+      >
+        Ready
+      </button>
       {/* <button onClick={() => setRuning(!isRuning)}>
         {isRuning ? "pause" : "play"}
       </button> */}

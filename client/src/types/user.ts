@@ -22,6 +22,7 @@ enum USER_STATUS {
   JOINED = "joined",
   CONNECTION_FAILED = "connection-failed",
   DISCONNECTED = "disconnected",
+  READY = "ready",
 }
 
 export { USER_CONNECTION_STATUS, USER_STATUS };
