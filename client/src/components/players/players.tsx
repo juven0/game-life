@@ -17,7 +17,8 @@ const Players = () => {
                 userData={
                   datas.filter(
                     (userData) =>
-                      userData?.currentUser?.userName === user.userName
+                      userData[user.userName]?.currentUser?.userName ===
+                      user.userName
                   )[0]
                 }
               />

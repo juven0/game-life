@@ -32,8 +32,8 @@ const PlayerBoard = ({
                 width={cellSize}
                 fill={
                   userData !== undefined
-                    ? userData.userPopulation?.length > 1
-                      ? userData.userPopulation.find(
+                    ? userData[playerName].userPopulation?.length > 1
+                      ? userData[playerName].userPopulation.find(
                           (e) => e.x === row && e.y === col
                         )
                         ? "black"

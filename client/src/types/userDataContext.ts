@@ -2,8 +2,10 @@ import { position } from "../utils/algo";
 import { RemoteUser } from "./user";
 
 type userData = {
-  userPopulation: position[];
-  currentUser: RemoteUser;
+  [username: string]: {
+    userPopulation: position[];
+    currentUser: RemoteUser;
+  };
 };
 
 interface usersDataConctext {
