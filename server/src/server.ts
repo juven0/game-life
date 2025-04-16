@@ -83,10 +83,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on(SocketEvent.USER_READY, (data) => {
-    console.log(data.currentUser.roomId);
+    const resp = {
+      [data.currentUser.userName]: data,
+    };
     socket.broadcast
       .to(data.currentUser.roomId)
-      .emit(SocketEvent.USER_READY, data);
+      .emit(SocketEvent.USER_READY, resp);
   });
 });
 
