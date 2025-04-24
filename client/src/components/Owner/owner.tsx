@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { position } from "../../utils/algo";
+import { useEffect, useState } from "react";
+import mainLop, { position } from "../../utils/algo";
 import "./owner.scss";
 import { UseAppContext } from "../../context/appContext";
 import { useSocket } from "../../context/socketContext";
 import { socketEvents } from "../../types/socket";
 import { USER_STATUS } from "../../types/user";
+import { GAME_STATUS } from "../../types/game";
 
 const iteration = 2;
 const timeSleep = 2000;
@@ -14,7 +15,8 @@ function delay(ms: number) {
 }
 
 const Owner = () => {
-  const { userPopulation, setUserPopulation, currentUser } = UseAppContext();
+  const { userPopulation, setUserPopulation, currentUser, gameState } =
+    UseAppContext();
   const { socket } = useSocket();
   const { status, setStatus } = UseAppContext();
 
@@ -45,15 +47,15 @@ const Owner = () => {
     setGa((prev) => [...prev, { x: row, y: col }]);
   };
 
-  // useEffect(() => {
-  //   if (!isRuning) return;
-  //   delay(timeSleep);
-  //   const interval = setInterval(() => {
-  //     setGa((prevGa) => mainLop(69, prevGa));
-  //   }, 200);
+  useEffect(() => {
+    if (gameState.status !== GAME_STATUS.STARTED) return;
+    delay(timeSleep);
+    const interval = setInterval(() => {
+      setGa((prevGa) => mainLop(69, prevGa));
+    }, 200);
 
-  //   return () => clearInterval(interval);
-  // }, [isRuning]);
+    return () => clearInterval(interval);
+  }, [gameState]);
 
   return (
     <div className="container">

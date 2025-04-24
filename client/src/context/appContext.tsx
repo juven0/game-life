@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { AppContext as AppContextType } from "../types/app";
 import { RemoteUser, User, USER_STATUS } from "../types/user";
 import { position } from "../utils/algo";
+import { Game, GAME_STATUS } from "../types/game";
 
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -19,11 +20,13 @@ function AppContextProvider({ children }: { children: ReactNode }) {
     roomId: "",
     userName: "",
   });
-
   const [users, setUsers] = useState<RemoteUser[]>([]);
   const [userPopulation, setUserPopulation] = useState<position[]>([]);
-
   const [status, setStatus] = useState<USER_STATUS>(USER_STATUS.INITIAL);
+  const [gameState, setGameState] = useState<Game>({
+    status: GAME_STATUS.WAITING,
+  });
+
   return (
     <AppContext.Provider
       value={{
@@ -35,6 +38,8 @@ function AppContextProvider({ children }: { children: ReactNode }) {
         setStatus,
         userPopulation,
         setUserPopulation,
+        gameState,
+        setGameState,
       }}
     >
       {children}

@@ -3,6 +3,10 @@ enum USER_CONNECTION_STATUS {
   OFFLINE = "offline",
 }
 
+enum USER_GAME_STATUS {
+  READY = "ready",
+  CREATE = "create",
+}
 interface User {
   userName: string;
   roomId: string;
@@ -13,6 +17,7 @@ interface RemoteUser {
   roomId: string;
   socketId: string;
   status: USER_STATUS;
+  gameStatus: USER_GAME_STATUS;
 }
 
 enum USER_STATUS {

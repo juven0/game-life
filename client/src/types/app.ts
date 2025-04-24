@@ -1,4 +1,5 @@
 import { position } from "../utils/algo";
+import { Game } from "./game";
 import { RemoteUser, User, USER_STATUS } from "./user";
 
 interface AppContext {
@@ -14,6 +15,8 @@ interface AppContext {
   setUserPopulation: (
     userPopulation: position[] | ((userPopulation: position[]) => position[])
   ) => void;
+  gameState: Game;
+  setGameState: (gameState: Game | ((gameState: Game) => Game)) => void;
 }
 
 export type { AppContext };
