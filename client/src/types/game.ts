@@ -8,4 +8,5 @@ interface Game {
   status: GAME_STATUS;
 }
 
-export { GAME_STATUS, Game };
+export { GAME_STATUS };
+export type { Game };

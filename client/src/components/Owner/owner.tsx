@@ -48,6 +48,7 @@ const Owner = () => {
   };
 
   useEffect(() => {
+    console.log(gameState.status);
     if (gameState.status !== GAME_STATUS.STARTED) return;
     delay(timeSleep);
     const interval = setInterval(() => {

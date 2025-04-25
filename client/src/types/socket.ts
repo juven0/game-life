@@ -13,6 +13,7 @@ enum socketEvents {
   JOIN_ACCEPTED = "join_accepted",
   UPDATE_ROOM_ARRAY = "update_room_array",
   USER_READY = "user_ready",
+  GAME_START = "game_start",
 }
 
 export { socketEvents };

@@ -16,6 +16,7 @@ import { UseAppContext } from "./appContext";
 import toast from "react-hot-toast";
 import { useUserData } from "./usersData";
 import { userData } from "../types/userDataContext";
+import { GAME_STATUS } from "../types/game";
 
 const SocketContext = createContext<socketContextType | null>(null);
 
@@ -32,7 +33,8 @@ export const useSocket = (): socketContextType => {
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:1212";
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
-  const { setCurrentUser, setUsers, setStatus, users } = UseAppContext();
+  const { setCurrentUser, setUsers, setStatus, users, setGameState } =
+    UseAppContext();
   const { datas, setDatas } = useUserData();
 
   const handelJoinAccept = useCallback(
@@ -76,16 +78,29 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     [datas, setDatas]
   );
 
+  const setGameStart = useCallback(() => {
+    setGameState({ status: GAME_STATUS.STARTED });
+  }, [setGameState]);
+
   useEffect(() => {
     socket.on(socketEvents.JOIN_ACCEPTED, handelJoinAccept);
     socket.on(socketEvents.USER_JOINED, handelJoined);
     socket.on(socketEvents.USER_READY, setUserReady);
+    socket.on(socketEvents.GAME_START, setGameStart);
     return () => {
       socket.off(socketEvents.JOIN_ACCEPTED);
       socket.off(socketEvents.USER_JOINED);
       socket.off(socketEvents.USER_READY);
+      socket.off(socketEvents.GAME_START);
     };
-  }, [handelJoinAccept, handelJoined, socket, setUsers, setUserReady]);
+  }, [
+    handelJoinAccept,
+    handelJoined,
+    socket,
+    setUsers,
+    setUserReady,
+    setGameStart,
+  ]);
 
   return (
     <SocketContext.Provider value={{ socket }}>
