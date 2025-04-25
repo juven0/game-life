@@ -7,6 +7,6 @@
     "skipLibCheck": true,
     "outDir": "./dist"
   },
-  "include": ["src"],
+  "include": ["src", "../client/src/types/game.ts"],
   "exclude": ["node_modules"]
 }

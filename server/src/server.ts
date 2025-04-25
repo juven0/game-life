@@ -5,7 +5,7 @@ import path from "path";
 import { Server } from "socket.io";
 import http from "http";
 import { SocketEvent } from "./types/socket";
-import { User, USER_STATUS } from "./types/user";
+import { User, USER_STATUS, USER_GAME_STATUS } from "./types/user";
 
 dotenv.config();
 
@@ -49,6 +49,11 @@ function getUserBySocketId(socketId: string): User | null {
   return user;
 }
 
+function verifyRoomStatus(roomId: string) {
+  return userSocketMap.every(
+    (user) => user.gameStatus === USER_GAME_STATUS.READY
+  );
+}
 io.on("connection", (socket) => {
   socket.on(SocketEvent.JOIN_REQUEST, ({ roomId, userName }) => {
     console.log(userName);
@@ -66,6 +71,7 @@ io.on("connection", (socket) => {
       roomId: roomId,
       status: USER_STATUS.ONLINE,
       socketId: socket.id,
+      gameStatus: USER_GAME_STATUS.CREATE,
     };
 
     userSocketMap.push(user);
@@ -73,7 +79,6 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomId).emit(SocketEvent.USER_JOINED, { user });
     const users = getUserInRoom(roomId);
     io.to(socket.id).emit(SocketEvent.JOIN_ACCEPTED, { user, users });
-    console.log(users);
   });
 
   socket.on(SocketEvent.UPDATE_ROOM_ARRAY, ({ roomId, userArray, user }) => {
@@ -83,12 +88,24 @@ io.on("connection", (socket) => {
   });
 
   socket.on(SocketEvent.USER_READY, (data) => {
+    userSocketMap.map((user) => {
+      if (user.userName === data.currentUser.userName) {
+        user.gameStatus = USER_GAME_STATUS.READY;
+      }
+    });
+
     const resp = {
       [data.currentUser.userName]: data,
     };
     socket.broadcast
       .to(data.currentUser.roomId)
       .emit(SocketEvent.USER_READY, resp);
+
+    if (verifyRoomStatus(data.currentUser.roomId)) {
+      socket.broadcast
+        .to(data.currentUser.roomId)
+        .emit(SocketEvent.GAME_START, data.currentUser.roomId);
+    }
   });
 });
 
