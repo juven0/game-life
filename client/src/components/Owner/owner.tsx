@@ -18,7 +18,7 @@ const Owner = () => {
   const { userPopulation, setUserPopulation, currentUser, gameState } =
     UseAppContext();
   const { socket } = useSocket();
-  const { status, setStatus } = UseAppContext();
+  const { status, setStatus, setGameState } = UseAppContext();
 
   const [Ga, setGa] = useState<position[]>(userPopulation || []);
   // const [isRuning, setRuning] = useState(false);
@@ -40,6 +40,7 @@ const Owner = () => {
   const ready = () => {
     socket.emit(socketEvents.USER_READY, { userPopulation, currentUser });
     setStatus(USER_STATUS.READY);
+    // setGameState({ status: GAME_STATUS.STARTED });
   };
 
   const addCell = (row: number, col: number) => {

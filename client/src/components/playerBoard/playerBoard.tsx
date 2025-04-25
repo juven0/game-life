@@ -11,7 +11,6 @@ const PlayerBoard = ({
   const cellSize = 7;
   const numCell = 50;
 
-  console.log(userData);
   return (
     <div className="playerBoard">
       <div className="playerInfo">
